@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form Pendaftaran</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0000;
+      --surface: #130000;
+      --border: #3a0a0a;
+      --accent: #e02020;
+      --accent2: #ff6040;
+      --text: #f5f0f0;
+      --muted: #9a7a7a;
+      --success: #00e5a0;
+      --error: #ff4d4d;
+      --input-bg: #1a0505;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background blobs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(220,30,30,0.18), transparent 70%);
+      top: -150px; left: -150px;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(180,10,10,0.12), transparent 70%);
+      bottom: -100px; right: -100px;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header { margin-bottom: 2rem; }
+
+    .badge {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(220,30,30,0.12);
+      border: 1px solid rgba(220,30,30,0.25);
+      border-radius: 100px;
+      padding: 0.3rem 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.15s; }
+    .form-group:nth-child(3) { animation-delay: 0.2s; }
+    .form-group:nth-child(4) { animation-delay: 0.25s; }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.85rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input::placeholder { color: var(--muted); opacity: 0.6; }
+
+    input:focus {
+      border-color: var(--accent);
+      background: #1e0505;
+      box-shadow: 0 0 0 3px rgba(220,30,30,0.15);
+    }
+
+    input.valid {
+      border-color: var(--success);
+      box-shadow: 0 0 0 3px rgba(0,229,160,0.1);
+    }
+
+    input.invalid {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(255,77,109,0.1);
+    }
+
+    .field-msg {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      margin-top: 0.45rem;
+      min-height: 1.1em;
+      transition: all 0.2s;
+    }
+
+    .field-msg.error { color: var(--error); }
+    .field-msg.ok    { color: var(--success); }
+
+    .field-msg::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .field-msg.error::before { background: var(--error); }
+    .field-msg.ok::before    { background: var(--success); }
+
+    /* Password strength */
+    .strength-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: 0.5rem;
+    }
+    .strength-bar span {
+      flex: 1;
+      height: 3px;
+      border-radius: 10px;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+    .strength-bar.weak span:nth-child(1) { background: var(--error); }
+    .strength-bar.medium span:nth-child(1),
+    .strength-bar.medium span:nth-child(2) { background: #f5a623; }
+    .strength-bar.strong span { background: var(--success); }
+
+    .strength-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* Submit button */
+    button[type="submit"] {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--accent), #8b0000);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(220,30,30,0.4);
+    }
+
+    button[type="submit"]:active { transform: translateY(0); }
+
+    button[type="submit"]::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+      pointer-events: none;
+    }
+
+    /* Success message */
+    .success-banner {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      background: rgba(0,229,160,0.08);
+      border: 1px solid rgba(0,229,160,0.25);
+      border-radius: 12px;
+      animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .success-banner.show { display: flex; }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .success-icon {
+      width: 36px; height: 36px;
+      background: var(--success);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 1rem;
+    }
+
+    .success-text strong {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      color: var(--success);
+    }
+
+    .success-text span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1.5rem 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 2rem 1.25rem; border-radius: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header">
+      <div class="badge">✦ PT Tim Teknologi Global</div>
+      <h1>Buat <span>Akun</span><br/>Baru</h1>
+      <p class="subtitle">Isi formulir di bawah untuk mendaftar.</p>
+    </div>
+
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label for="fullname">Nama Lengkap</label>
+        <div class="input-wrap">
+          <input type="text" id="fullname" placeholder="Contoh: Figo Pratama" autocomplete="name" />
+        </div>
+        <div class="field-msg" id="msg-fullname"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Alamat Email</label>
+        <div class="input-wrap">
+          <input type="email" id="email" placeholder="email.figo@gmail.com" autocomplete="email" />
+        </div>
+        <div class="field-msg" id="msg-email"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Kata Sandi</label>
+        <div class="input-wrap">
+          <input type="password" id="password" placeholder="Minimal 8 karakter" autocomplete="new-password" />
+        </div>
+        <div class="strength-bar" id="strength-bar">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="strength-label" id="strength-label"></div>
+        <div class="field-msg" id="msg-password"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm">Konfirmasi Kata Sandi</label>
+        <div class="input-wrap">
+          <input type="password" id="confirm" placeholder="Ulangi kata sandi" autocomplete="new-password" />
+        </div>
+        <div class="field-msg" id="msg-confirm"></div>
+      </div>
+
+      <button type="submit">Daftar Sekarang →</button>
+    </form>
+
+    <div class="success-banner" id="successBanner">
+      <div class="success-icon">✓</div>
+      <div class="success-text">
+        <strong>Pendaftaran berhasil!</strong>
+        <span>Akun Anda telah berhasil dibuat.</span>
+      </div>
+    </div>
+
+    <div class="divider">Sudah punya akun? masuk di sini</div>
+  </div>
+
+  <script>
+    const form     = document.getElementById('registerForm');
+    const fullname = document.getElementById('fullname');
+    const email    = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirm  = document.getElementById('confirm');
+    const banner   = document.getElementById('successBanner');
+
+    const VALID_DOMAINS = ['gmail.com','yahoo.com','yahoo.co.id','hotmail.com','outlook.com','icloud.com','live.com'];
+
+    function setMsg(id, text, type) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = 'field-msg' + (text ? ' ' + type : '');
+    }
+
+    function setValidity(input, valid) {
+      input.classList.toggle('valid', valid);
+      input.classList.toggle('invalid', !valid);
+    }
+
+    // Password strength
+    function checkStrength(val) {
+      const bar   = document.getElementById('strength-bar');
+      const label = document.getElementById('strength-label');
+      if (!val) { bar.className = 'strength-bar'; label.textContent = ''; return; }
+      const hasUpper  = /[A-Z]/.test(val);
+      const hasNum    = /[0-9]/.test(val);
+      const hasSymbol = /[^a-zA-Z0-9]/.test(val);
+      const score = [val.length >= 8, hasUpper, hasNum || hasSymbol].filter(Boolean).length;
+      if (score === 1) { bar.className = 'strength-bar weak';   label.textContent = 'Lemah'; }
+      else if (score === 2) { bar.className = 'strength-bar medium'; label.textContent = 'Sedang'; }
+      else { bar.className = 'strength-bar strong';  label.textContent = 'Kuat'; }
+    }
+
+    // Validators
+    function validateFullname() {
+      const v = fullname.value.trim();
+      if (!v) { setMsg('msg-fullname','Nama lengkap wajib diisi','error'); setValidity(fullname,false); return false; }
+      if (v.length < 2) { setMsg('msg-fullname','Nama terlalu pendek','error'); setValidity(fullname,false); return false; }
+      setMsg('msg-fullname','Nama valid','ok'); setValidity(fullname,true); return true;
+    }
+
+    function validateEmail() {
+      const v = email.value.trim().toLowerCase();
+      const parts = v.split('@');
+      if (!v || parts.length !== 2) { setMsg('msg-email','Email tidak valid','error'); setValidity(email,false); return false; }
+      const domain = parts[1];
+      if (!VALID_DOMAINS.includes(domain)) {
+        setMsg('msg-email',`Domain tidak didukung. Gunakan: ${VALID_DOMAINS.slice(0,3).join(', ')}, dll.`,'error');
+        setValidity(email,false); return false;
+      }
+      setMsg('msg-email','Email valid','ok'); setValidity(email,true); return true;
+    }
+
+    function validatePassword() {
+      const v = password.value;
+      if (!v) { setMsg('msg-password','Kata sandi wajib diisi','error'); setValidity(password,false); return false; }
+      if (v.length < 8) { setMsg('msg-password','Minimal 8 karakter','error'); setValidity(password,false); return false; }
+      setMsg('msg-password','Kata sandi valid','ok'); setValidity(password,true);
+      if (confirm.value) validateConfirm();
+      return true;
+    }
+
+    function validateConfirm() {
+      const v = confirm.value;
+      if (!v) { setMsg('msg-confirm','Konfirmasi kata sandi wajib diisi','error'); setValidity(confirm,false); return false; }
+      if (v !== password.value) { setMsg('msg-confirm','Kata sandi tidak cocok','error'); setValidity(confirm,false); return false; }
+      setMsg('msg-confirm','Kata sandi cocok','ok'); setValidity(confirm,true); return true;
+    }
+
+    // Live validation
+    fullname.addEventListener('blur', validateFullname);
+    email.addEventListener('blur', validateEmail);
+    password.addEventListener('input', () => { checkStrength(password.value); if(password.classList.contains('invalid')||password.classList.contains('valid')) validatePassword(); });
+    password.addEventListener('blur', validatePassword);
+    confirm.addEventListener('blur', validateConfirm);
+    confirm.addEventListener('input', () => { if(confirm.classList.contains('invalid')||confirm.classList.contains('valid')) validateConfirm(); });
+
+    // Submit
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const ok = [validateFullname(), validateEmail(), validatePassword(), validateConfirm()].every(Boolean);
+      if (ok) {
+        banner.classList.add('show');
+        form.reset();
+        [fullname, email, password, confirm].forEach(i => { i.classList.remove('valid','invalid'); });
+        document.getElementById('strength-bar').className = 'strength-bar';
+        document.getElementById('strength-label').textContent = '';
+        ['msg-fullname','msg-email','msg-password','msg-confirm'].forEach(id => setMsg(id,'',''));
+        setTimeout(() => banner.classList.remove('show'), 5000);
+      }
+    });
+  </script>
+</body>
+</html>
