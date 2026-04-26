@@ -3,12 +3,15 @@
 Technical assessment for Full Stack Developer position at PT Tim Teknologi Global.
 
 ## Project Structure
+```
 ttg-test/
-├── 1-frontend/          # Task 1: Registration Form (HTML/CSS/JS)
-├── 2-backend/           # Task 2: REST API (Node.js + Express + MongoDB)
-├── 3-number-finding/    # Task 3: Find Missing Numbers (Python)
-├── 4-calculation-formula/ # Task 4: Calculation Formula Finder (Python)
-└── README.md            # This file
+├── 1-frontend/             # Task 1: Registration Form (HTML/CSS/JS)
+├── 2-backend/              # Task 2: REST API (Node.js + Express + MongoDB)
+├── 3-number-finding/       # Task 3: Find Missing Numbers (Python)
+├── 4-calculation-formula/  # Task 4: Calculation Formula Finder (Python)
+└── README.md               # This file
+```
+
 ## Tasks Overview
 
 | # | Task | Tech Stack | Status |
